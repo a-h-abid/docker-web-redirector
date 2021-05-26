@@ -1,0 +1,9 @@
+services:
+
+   web-redirector:
+    image: ${DOCKER_IMAGE_NAME}:${PATCH_NUMBER}
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    networks:
+      - default

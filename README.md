@@ -15,8 +15,8 @@ A very simple container to redirect HTTP/HTTPS traffic to another server, based 
 
 - `SERVER_ENABLE_HTTP_TRAFFIC` - serve traffic in HTTP (80)
 - `SERVER_ENABLE_HTTPS_TRAFFIC` - serve traffic in HTTPS (443)
-- `SERVER_SSL_CERTIFICATE_FILE_NAME` - Set certificate file name
-- `SERVER_SSL_CERTIFICATE_KEY_NAME` - Set certificate key file name
+- `SERVER_SSL_CERTIFICATE_FILE_NAME` - Set certificate file name. Certificate files should be mounted at `/etc/ssl/certs` path.
+- `SERVER_SSL_CERTIFICATE_KEY_NAME` - Set certificate key file name. Certificate files should be mounted at `/etc/ssl/certs` path.
 - `SERVER_REDIRECT` - server to redirect to, eg. `www.example.com`
 - `SERVER_NAME` - optionally define the server name to listen on eg. `~^www.(?<subdomain>.+).example.com`
    - useful for capturing variable to use in server_redirect.
@@ -45,11 +45,27 @@ See also `docker-compose.yml` file.
 
 ## Usage
 
-With `docker`
+Using image from Docker Hub:
 
-    docker run -e SERVER_REDIRECT=www.example.com -p 8888:80 ahabid/web-redirector:1.0
-    docker run -e SERVER_REDIRECT=www.example.com -e SERVER_REDIRECT_PATH=/landingpage -p 8888:80 ahabid/web-redirector:1.0
-    docker run -e SERVER_REDIRECT=www.example.com -e SERVER_REDIRECT_PATH=/landingpage -e SERVER_REDIRECT_SCHEME=https -p 8888:80 ahabid/web-redirector:1.0
+    docker run -e SERVER_REDIRECT=www.example.com -p 80:80 ahabid/web-redirector:1.0
+    docker run -e SERVER_REDIRECT=www.example.com -e SERVER_REDIRECT_PATH=/landingpage -p 80:80 ahabid/web-redirector:1.0
+    docker run -e SERVER_REDIRECT=www.example.com -e SERVER_REDIRECT_PATH=/landingpage -e SERVER_REDIRECT_SCHEME=https -p 80:80 ahabid/web-redirector:1.0
+
+Using image from GitHub:
+
+    docker run -e SERVER_REDIRECT=www.example.com -p 80:80 docker.pkg.github.com/a-h-abid/docker-web-redirector/web-redirector:1.0
+
+
+For certificates usage:
+
+    docker run \
+        -e SERVER_REDIRECT=www.example.com \
+        -e SERVER_ENABLE_HTTPS_TRAFFIC=true \
+        -e SERVER_SSL_CERTIFICATE_FILE_NAME=default.crt \
+        -e SERVER_SSL_CERTIFICATE_KEY_NAME=default.key \
+        -v /path/to/certs-dir:/etc/ssl/certs \
+        -p 443:443 \
+        ahabid/web-redirector:1.0
 
 ---
 
